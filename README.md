@@ -64,7 +64,8 @@ lab-toolkit/
 │   ├── mac-template.sh     # starting point for new Mac scripts
 │   └── win-template.ps1    # starting point for new Windows scripts
 └── docs/
-    └── decommission-mac.md # runbook: Mac prep for resale/surplus
+    ├── decommission-mac.md # runbook: Mac prep for resale/surplus
+    └── hosting-and-dns.md  # how this repo is hosted + DNS primer
 ```
 
 Folders are organized **by platform, then by problem domain**, so URLs read naturally:
