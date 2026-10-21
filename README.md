@@ -41,7 +41,8 @@ irm https://spieles.us/win/system/info.ps1 | iex
 ```
 lab-toolkit/
 ├── README.md               # this file
-├── INDEX.md                # one-line catalog of every script
+├── INDEX.md                # one-line catalog of every script (drives index.html)
+├── index.html              # spieles.us homepage, rendered from INDEX.md
 ├── .gitattributes          # enforces LF for .sh, CRLF for .ps1
 ├── .nojekyll               # serve files raw on GitHub Pages
 ├── CNAME                   # short custom domain for GitHub Pages
@@ -117,7 +118,8 @@ Folders are organized **by platform, then by problem domain**, so URLs read natu
 ```bash
 cp templates/mac-template.sh mac/network/flush-dns.sh
 # edit header + body, test on a lab machine
-echo "- mac/network/flush-dns.sh — 🟢 Flush DNS cache and restart mDNSResponder" >> INDEX.md
+# then add under the matching "### folder" heading in INDEX.md:
+# - `mac/network/flush-dns.sh` 🟢 Flush DNS cache and restart mDNSResponder
 git add -A && git commit -m "mac/network: add flush-dns" && git push
 ```
 

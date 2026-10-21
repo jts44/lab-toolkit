@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lab-toolkit</title>
+<style>
+  :root {
+    --bg: #fafaf9; --fg: #1c1917; --muted: #78716c; --line: #e7e5e4;
+    --card: #ffffff; --code: #f5f5f4; --accent: #2563eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0a09; --fg: #e7e5e4; --muted: #a8a29e; --line: #292524;
+      --card: #1c1917; --code: #292524; --accent: #60a5fa;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  input[type=search] {
+    flex: 1 1 240px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--card); color: var(--fg); font: inherit;
+  }
+  .legend { color: var(--muted); font-size: 13px; align-self: center; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+       margin: 28px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+  h3 { font-size: 14px; margin: 16px 0 6px; }
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+          padding: 10px 12px; margin-bottom: 8px; }
+  .row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+  .path a { color: var(--accent); text-decoration: none; }
+  .desc { color: var(--muted); font-size: 14px; margin: 2px 0 8px; }
+  .cmd { display: flex; gap: 6px; }
+  code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; display: block;
+         background: var(--code); padding: 6px 8px; border-radius: 4px;
+         font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  button { border: 1px solid var(--line); background: var(--card); color: var(--fg);
+           border-radius: 4px; padding: 0 10px; font-family: inherit; font-size: 12px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  .empty { color: var(--muted); font-size: 13px; font-style: italic; margin: 0 0 6px; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>lab-toolkit</h1>
+  <p class="sub">Mac and Windows troubleshooting scripts. Commands copy ready to paste.</p>
+  <div class="bar">
+    <input type="search" id="q" placeholder="Filter scripts…" autocomplete="off">
+    <span class="legend">🟢 read-only · 🟡 modifies · 🔴 destructive</span>
+  </div>
+  <div id="list"><p class="empty">Loading INDEX.md…</p></div>
+  <footer>
+    Catalog generated from <a href="INDEX.md">INDEX.md</a> ·
+    <a href="docs/hosting-and-dns.md">Hosting &amp; DNS guide</a> ·
+    <a href="docs/decommission-mac.md">Mac decommission runbook</a> ·
+    <a href="https://github.com/jts44/lab-toolkit">GitHub</a>
+  </footer>
+</main>
+<script>
+const BASE = location.origin + '/';
+
+// Build the suggested command for a script based on platform and safety tier.
+function command(path, tier) {
+  const url = BASE + path;
+  const file = path.split('/').pop();
+  if (path.endsWith('.ps1')) {
+    return tier === '🟢'
+      ? `irm ${url} | iex`
+      : `irm ${url} -OutFile ${file}; notepad ${file}`;
+  }
+  if (tier === '🟢') return `curl -fsSL ${url} | sudo zsh`;
+  return `curl -fsSLO ${url} && less ${file} && sudo zsh ${file} --dry-run`;
+}
+
+// Parse INDEX.md: "## Platform", "### folder", "- `path` 🟢 description"
+function parse(md) {
+  const out = []; let h2 = null, h3 = null;
+  for (const raw of md.split('\n')) {
+    const line = raw.trim();
+    if (line.startsWith('### ')) { h3 = { name: line.slice(4), items: [] }; h2 && h2.groups.push(h3); }
+    else if (line.startsWith('## ')) { h2 = { name: line.slice(3), groups: [] }; out.push(h2); h3 = null; }
+    else if (line.startsWith('- ') && h3) {
+      const m = line.match(/^-\s+`?([^`\s]+\.(?:sh|zsh|ps1|cmd|py))`?\s*(?:—\s*)?(🟢|🟡|🔴)?\s*(.*)$/u);
+      if (m) h3.items.push({ path: m[1], tier: m[2] || '', desc: m[3] });
+    }
+  }
+  return out;
+}
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function render(data, filter) {
+  const f = filter.toLowerCase();
+  let html = '';
+  for (const p of data) {
+    let block = '';
+    for (const g of p.groups) {
+      const items = g.items.filter(i => !f || (i.path + ' ' + i.desc).toLowerCase().includes(f));
+      if (f && !items.length) continue;
+      block += `<h3>${esc(g.name)}</h3>`;
+      if (!items.length) { block += '<p class="empty">No scripts yet.</p>'; continue; }
+      for (const i of items) {
+        const cmd = command(i.path, i.tier);
+        block += `<div class="item">
+          <div class="row"><span class="path">${i.tier} <a href="${esc(i.path)}">${esc(i.path)}</a></span></div>
+          <div class="desc">${esc(i.desc)}</div>
+          <div class="cmd"><code>${esc(cmd)}</code><button data-cmd="${esc(cmd)}">Copy</button></div>
+        </div>`;
+      }
+    }
+    if (block) html += `<h2>${esc(p.name)}</h2>` + block;
+  }
+  document.getElementById('list').innerHTML = html || '<p class="empty">No matches.</p>';
+}
+
+let DATA = [];
+fetch('INDEX.md', { cache: 'no-cache' })
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(t => { DATA = parse(t); render(DATA, ''); })
+  .catch(() => { document.getElementById('list').innerHTML =
+    '<p class="empty">Could not load INDEX.md. Browse the <a href="https://github.com/jts44/lab-toolkit">repo</a>.</p>'; });
+
+document.getElementById('q').addEventListener('input', e => render(DATA, e.target.value));
+document.getElementById('list').addEventListener('click', e => {
+  const b = e.target.closest('button[data-cmd]'); if (!b) return;
+  navigator.clipboard.writeText(b.dataset.cmd).then(() => {
+    b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1200);
+  });
+});
+</script>
+</body>
+</html>
