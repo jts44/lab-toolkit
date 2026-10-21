@@ -8,30 +8,30 @@ Personal command-line toolkit for troubleshooting and maintaining Mac (primary) 
 
 ## Quick start
 
-Replace `jx.sh` with your short domain.
+Hosted at https://spieles.us via GitHub Pages.
 
 **macOS (Terminal)**
 
 ```bash
 # Inspect, then run (preferred for anything destructive)
-curl -fsSLO https://jx.sh/mac/decommission/remove-jamf.sh
+curl -fsSLO https://spieles.us/mac/decommission/remove-jamf.sh
 less remove-jamf.sh
 sudo zsh remove-jamf.sh
 
 # One-liner (read-only/diagnostic scripts only)
-curl -fsSL https://jx.sh/mac/system/info.sh | zsh
+curl -fsSL https://spieles.us/mac/system/info.sh | zsh
 ```
 
 **Windows (PowerShell)**
 
 ```powershell
 # Inspect, then run
-irm https://jx.sh/win/system/info.ps1 -OutFile info.ps1
+irm https://spieles.us/win/system/info.ps1 -OutFile info.ps1
 notepad info.ps1
 powershell -ExecutionPolicy Bypass -File .\info.ps1
 
 # One-liner (read-only/diagnostic scripts only)
-irm https://jx.sh/win/system/info.ps1 | iex
+irm https://spieles.us/win/system/info.ps1 | iex
 ```
 
 ---
@@ -68,7 +68,7 @@ lab-toolkit/
 ```
 
 Folders are organized **by platform, then by problem domain**, so URLs read naturally:
-`jx.sh/mac/network/flush-dns.sh`
+`spieles.us/mac/network/flush-dns.sh`
 
 ---
 
@@ -101,7 +101,7 @@ Folders are organized **by platform, then by problem domain**, so URLs read natu
 
 1. Create a **public** GitHub repo named `lab-toolkit`.
 2. Settings → Pages → Source: *Deploy from branch* → `main` / root.
-3. Add your domain to `CNAME` (one line, e.g. `jx.sh`).
+3. Add your domain to `CNAME` (one line, e.g. `spieles.us`).
 4. At your DNS provider, add the GitHub Pages records:
    - Apex domain: `A` records to GitHub's Pages IPs (see GitHub docs)
    - Or a subdomain: `CNAME` → `<username>.github.io`
