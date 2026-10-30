@@ -1,3 +1,10 @@
+---
+title: "Retire or resell a Mac"
+description: "Order of steps to remove management software and erase a Mac for resale or surplus."
+audience: staff
+order: 10
+---
+
 # Runbook: Mac decommission for resale or surplus
 
 ## Before touching the Mac

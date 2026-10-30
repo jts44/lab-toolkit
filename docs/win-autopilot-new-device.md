@@ -1,3 +1,10 @@
+---
+title: "Set up a new Dell already in Autopilot"
+description: "Move a pre-registered PC into the right groups before its first boot."
+audience: staff
+order: 21
+---
+
 # Path B: New Dell already registered in Autopilot (group migration only)
 
 **Use when:** the vendor registered the hardware hash at purchase, so the serial already appears in Intune → Devices → Enrollment → Windows Autopilot → Devices. No script or hash upload needed.

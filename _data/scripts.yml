@@ -1,0 +1,91 @@
+# Script catalog: drives the home page and INDEX.
+# One entry per script. Write `when` and `what` for a student worker:
+# plain words, no jargon, say what changes.
+#
+# Fields
+#   path      repo path to the script
+#   platform  mac | win
+#   category  heading the card appears under
+#   title     short plain-language name
+#   audience  anyone (read-only, safe) | admin (needs admin password) | staff (IT staff only)
+#   when      "Use when..." the symptom or situation, in the user's words
+#   what      what the script does and whether it changes anything
+#   next      (optional) what to do with the result
+#   guide     (optional) related guide page (.html)
+#   cmd       exact command to copy
+
+# ---------------- macOS ----------------
+- path: mac/decommission/verify.sh
+  platform: mac
+  category: Retire or resell a Mac
+  title: Check a Mac for leftover management software
+  audience: admin
+  when: You need to confirm a Mac is fully cleaned up before it is erased, resold, or sent to surplus.
+  what: Lists any remaining device-management profiles, Jamf or BeyondTrust software, and background items. Changes nothing.
+  next: Every section should say "none" and enrollment should say "No". If not, give the output to IT staff.
+  guide: /docs/decommission-mac.html
+  cmd: curl -fsSL https://spieles.us/mac/decommission/verify.sh | sudo zsh
+
+- path: mac/decommission/remove-beyondtrust.sh
+  platform: mac
+  category: Retire or resell a Mac
+  title: Remove BeyondTrust (admin-rights manager)
+  audience: staff
+  when: A Mac that is being retired keeps blocking admin passwords or shows BeyondTrust pop-ups. Run this first, before removing Jamf.
+  what: Runs BeyondTrust's own uninstaller and deletes its leftover folders. Removes software, so it cannot be undone.
+  guide: /docs/decommission-mac.html
+  cmd: curl -fsSLO https://spieles.us/mac/decommission/remove-beyondtrust.sh && sudo zsh remove-beyondtrust.sh --dry-run
+
+- path: mac/decommission/remove-jamf.sh
+  platform: mac
+  category: Retire or resell a Mac
+  title: Remove Jamf and Self Service
+  audience: staff
+  when: A Mac released from university management still shows Self Service, Jamf, or "register this device" pop-ups from Microsoft.
+  what: Removes Jamf, Self Service, Jamf Connect, and the Conditional Access helper that causes the Microsoft pop-ups. Removes software, so it cannot be undone. Restart afterward.
+  next: Restart, then run "Check a Mac for leftover management software".
+  guide: /docs/remove-jamf-mac.html
+  cmd: curl -fsSLO https://spieles.us/mac/decommission/remove-jamf.sh && sudo zsh remove-jamf.sh --dry-run
+
+# ---------------- Windows ----------------
+- path: win/intune/get-device-info.ps1
+  platform: win
+  category: Windows PC setup and management
+  title: Show this PC's management status
+  audience: anyone
+  when: Start here for almost any Windows PC problem, or when IT asks for the computer's serial number or status.
+  what: Shows the computer name, serial number, and whether the PC is connected to the university's management (Intune, Entra, and Active Directory). Changes nothing.
+  next: Take a screenshot of the output and include it in your ticket or message to IT.
+  guide: /docs/win-intune-troubleshooting.html
+  cmd: irm https://spieles.us/win/intune/get-device-info.ps1 | iex
+
+- path: win/intune/sync-intune.ps1
+  platform: win
+  category: Windows PC setup and management
+  title: Check in with Intune now
+  audience: admin
+  when: An app or setting that should be on the PC is missing, or IT just changed something and asked you to sync.
+  what: Asks the PC to check in with Intune right away instead of waiting. Installs or removes nothing by itself. Changes can still take 15–30 minutes to appear.
+  guide: /docs/win-intune-troubleshooting.html
+  cmd: irm https://spieles.us/win/intune/sync-intune.ps1 -OutFile sync-intune.ps1; powershell -ExecutionPolicy Bypass -File .\sync-intune.ps1
+
+- path: win/intune/clear-logon-notice.ps1
+  platform: win
+  category: Windows PC setup and management
+  title: Clear the "not properly managed" sign-in message
+  audience: staff
+  when: The PC was added to its building group and has synced, but the "not properly managed" message still appears at sign-in.
+  what: Deletes the old message from the registry. Reboot afterward. If the PC is still missing its group, the message comes back.
+  guide: /docs/win-intune-troubleshooting.html
+  cmd: irm https://spieles.us/win/intune/clear-logon-notice.ps1 -OutFile clear-logon-notice.ps1; powershell -ExecutionPolicy Bypass -File .\clear-logon-notice.ps1
+
+- path: win/intune/register-autopilot.ps1
+  platform: win
+  category: Windows PC setup and management
+  title: Register an existing PC with Autopilot
+  audience: staff
+  when: An older or reused PC needs to be re-imaged, but its serial number is not listed in Intune Autopilot.
+  what: Uploads the PC's hardware ID to Intune so it can be set up automatically after a reset. Requires an Intune admin sign-in.
+  next: Add the PC to its groups, wait for "Assigned", then reset. Follow the re-image guide.
+  guide: /docs/win-autopilot-reimage.html
+  cmd: irm https://spieles.us/win/intune/register-autopilot.ps1 -OutFile register-autopilot.ps1; powershell -ExecutionPolicy Bypass -File .\register-autopilot.ps1 -Assign

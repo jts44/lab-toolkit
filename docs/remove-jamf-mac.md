@@ -1,3 +1,10 @@
+---
+title: "Remove Jamf completely from a Mac"
+description: "Removing Jamf, Self Service, Jamf Connect, and leftover Microsoft Conditional Access pop-ups."
+audience: staff
+order: 11
+---
+
 # Removing Jamf completely from macOS
 
 - **Applies to:** Jamf Pro, Jamf Connect, Jamf Conditional Access (legacy), Microsoft Entra ID / Intune

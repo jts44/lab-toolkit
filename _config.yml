@@ -1,0 +1,25 @@
+# GitHub Pages builds this repo with Jekyll.
+# - Markdown (.md) files are rendered to .html using _layouts/default.html
+# - Scripts (.sh, .ps1) have no front matter, so they are served raw for curl/irm
+title: lab-toolkit
+description: Quick checks and fixes for lab Macs and Windows PCs.
+base_url: https://spieles.us
+repo_url: https://github.com/jts44/lab-toolkit
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+# Labels for the audience badges used on scripts and guides
+audiences:
+  anyone: Safe for anyone
+  admin: Needs admin password
+  staff: IT staff only
+

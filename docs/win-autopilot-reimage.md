@@ -1,3 +1,10 @@
+---
+title: "Re-image an existing Windows PC (Autopilot)"
+description: "Upload the hardware hash, fix the groups, wait for the profile, then reset."
+audience: staff
+order: 20
+---
+
 # Path A: Re-image an existing PC with Autopilot (hash upload + reset)
 
 **Use when:** the PC is not listed under Intune → Devices → Enrollment → Windows Autopilot → Devices (older hardware, reused machine, never registered).

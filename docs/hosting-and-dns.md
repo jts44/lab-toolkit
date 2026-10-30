@@ -1,3 +1,10 @@
+---
+title: "How this site is hosted (GitHub Pages and DNS)"
+description: "Maintainer notes: publishing, adding scripts, and DNS basics."
+audience: staff
+order: 90
+---
+
 # Hosting lab-toolkit on spieles.us
 
 How this repo is published, how to add scripts, and the DNS basics for future projects.
@@ -10,13 +17,20 @@ How this repo is published, how to add scripts, and the DNS basics for future pr
 GitHub repo (jts44/lab-toolkit, public, branch main)
         │  push
         ▼
-GitHub Pages (builds in ~1 min)
-        │  serves files as-is (.nojekyll)
+GitHub Pages + Jekyll (builds in ~1 min)
+        │  .md → .html pages · .sh/.ps1 served raw
         ▼
 spieles.us  ← DNS A records point here
 ```
 
 - Repo path = URL path: `mac/network/flush-dns.sh` → `https://spieles.us/mac/network/flush-dns.sh`
+- Markdown becomes HTML: `docs/how-to-use.md` → `https://spieles.us/docs/how-to-use.html`. Links between `.md` files are rewritten to `.html` automatically.
+- Files with no front matter (`---` block at the top) and that aren't Markdown are copied unchanged, so scripts stay raw for `curl`/`irm`.
+- Site pieces:
+  - `_config.yml`: site settings and badge labels
+  - `_layouts/default.html`: header, nav, and footer wrapped around every page
+  - `assets/style.css`, `assets/site.js`: styling, copy buttons, home page filter
+  - `_data/scripts.yml`: the script catalog (home page cards and `INDEX`)
 - `CNAME` file (repo root) tells GitHub which domain this site answers to. Do not delete it.
 - Repo must stay **public** (Pages on private repos requires GitHub Pro).
 
@@ -32,7 +46,9 @@ cp templates/mac-template.sh mac/network/flush-dns.sh   # new script
 git add -A && git commit -m "mac/network: add flush-dns" && git push
 ```
 - Live in ~1 minute. Check progress: repo → **Actions** → "pages build and deployment".
-- Add a line to `INDEX.md` for every new script.
+- Add an entry to `_data/scripts.yml` for every new script (see the field list at the top of that file). Write `when` and `what` for a student, not for yourself.
+- New guide: add a `.md` file in `docs/` with front matter (`title`, `description`, `audience`, `order`); it appears under **Guides** on the home page.
+- A build error leaves the previous version of the site online. The error message is in the **Actions** tab.
 
 **Use a script on a lab Mac**
 ```bash

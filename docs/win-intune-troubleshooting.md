@@ -1,3 +1,10 @@
+---
+title: "Windows / Intune troubleshooting"
+description: "Wait times, missing apps, sign-in messages, AD moves, and other common problems."
+audience: admin
+order: 22
+---
+
 # Intune / Autopilot troubleshooting
 
 Quick state check on the PC (read-only):

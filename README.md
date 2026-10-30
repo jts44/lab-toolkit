@@ -41,10 +41,13 @@ irm https://spieles.us/win/system/info.ps1 | iex
 ```
 lab-toolkit/
 ├── README.md               # this file
-├── INDEX.md                # one-line catalog of every script (drives index.html)
-├── index.html              # spieles.us homepage, rendered from INDEX.md
+├── index.html              # spieles.us home page (cards built from _data/scripts.yml)
+├── INDEX.md                # one-line catalog, generated from _data/scripts.yml
+├── _config.yml             # Jekyll/GitHub Pages settings, badge labels
+├── _data/scripts.yml       # script catalog: titles + plain-language descriptions
+├── _layouts/default.html   # page template for every rendered page
+├── assets/                 # style.css, site.js (copy buttons, filter)
 ├── .gitattributes          # enforces LF for .sh, CRLF for .ps1
-├── .nojekyll               # serve files raw on GitHub Pages
 ├── CNAME                   # short custom domain for GitHub Pages
 ├── mac/
 │   ├── decommission/       # pre-resale/surplus cleanup
@@ -66,6 +69,7 @@ lab-toolkit/
 │   ├── mac-template.sh     # starting point for new Mac scripts
 │   └── win-template.ps1    # starting point for new Windows scripts
 └── docs/
+    ├── how-to-use.md       # start here: for students and new staff
     ├── decommission-mac.md # runbook: Mac prep for resale/surplus
     ├── remove-jamf-mac.md  # full Jamf removal incl. Conditional Access
     ├── win-autopilot-reimage.md     # Path A: hash upload + reset
@@ -97,10 +101,10 @@ Folders are organized **by platform, then by problem domain**, so URLs read natu
 - macOS: `zsh` (default since 10.15); avoid Bash 3.2-only quirks
 - Windows: PowerShell 5.1 compatible (ships with Windows 10/11); avoid PS 7-only syntax unless noted
 
-**Safety tiers** (stated in each script header)
-- 🟢 *Read-only*: safe to pipe directly into a shell
-- 🟡 *Modifies settings*: reversible; download and review first
-- 🔴 *Destructive*: deletes data or software; always download, read, then run
+**Audience badges** (set per script in `_data/scripts.yml`)
+- `anyone`: read-only, changes nothing; safe for students and to pipe straight into a shell
+- `admin`: changes settings, needs admin rights; download and review first
+- `staff`: removes software or resets; IT staff only; always download, read, then run
 
 ---
 
@@ -114,7 +118,7 @@ Folders are organized **by platform, then by problem domain**, so URLs read natu
    - Or a subdomain: `CNAME` → `<username>.github.io`
 5. Enable **Enforce HTTPS** once the certificate is issued.
 
-`.nojekyll` makes Pages serve `.sh` and `.ps1` files exactly as committed.
+GitHub Pages runs Jekyll: Markdown files render as HTML pages, and scripts (no front matter) are served exactly as committed.
 
 ---
 
@@ -123,8 +127,7 @@ Folders are organized **by platform, then by problem domain**, so URLs read natu
 ```bash
 cp templates/mac-template.sh mac/network/flush-dns.sh
 # edit header + body, test on a lab machine
-# then add under the matching "### folder" heading in INDEX.md:
-# - `mac/network/flush-dns.sh` 🟢 Flush DNS cache and restart mDNSResponder
+# then add an entry to _data/scripts.yml (title, audience, when, what, cmd)
 git add -A && git commit -m "mac/network: add flush-dns" && git push
 ```
 
