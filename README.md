@@ -57,6 +57,7 @@ lab-toolkit/
 │   ├── users/              # local accounts, AD binding, home folders
 │   └── apps/               # app resets, caches, licensing
 ├── win/
+│   ├── intune/             # Autopilot registration, sync, device info
 │   ├── network/
 │   ├── system/
 │   ├── users/
@@ -67,6 +68,9 @@ lab-toolkit/
 └── docs/
     ├── decommission-mac.md # runbook: Mac prep for resale/surplus
     ├── remove-jamf-mac.md  # full Jamf removal incl. Conditional Access
+    ├── win-autopilot-reimage.md     # Path A: hash upload + reset
+    ├── win-autopilot-new-device.md  # Path B: pre-registered new PC
+    ├── win-intune-troubleshooting.md
     └── hosting-and-dns.md  # how this repo is hosted + DNS primer
 ```
 

@@ -17,6 +17,12 @@
 
 ## Windows
 
+### intune
+- `win/intune/get-device-info.ps1` 🟢 Serial, Entra/AD join state, Intune enrollment, Autopilot profile, AD OU
+- `win/intune/register-autopilot.ps1` 🟡 Upload Autopilot hardware hash to Intune (Path A: existing PC)
+- `win/intune/sync-intune.ps1` 🟡 Force Intune check-in; optional gpupdate
+- `win/intune/clear-logon-notice.ps1` 🟡 Remove stale "not properly managed" logon message after grouping
+
 ### network
 ### system
 ### users
