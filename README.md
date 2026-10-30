@@ -66,6 +66,7 @@ lab-toolkit/
 │   └── win-template.ps1    # starting point for new Windows scripts
 └── docs/
     ├── decommission-mac.md # runbook: Mac prep for resale/surplus
+    ├── remove-jamf-mac.md  # full Jamf removal incl. Conditional Access
     └── hosting-and-dns.md  # how this repo is hosted + DNS primer
 ```
 
